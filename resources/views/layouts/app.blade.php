@@ -18,22 +18,30 @@
         <div class="container">
 
             {{-- 📚 Logo goes to correct dashboard --}}
-            <a class="navbar-brand" 
-               href="@auth
-                        @if(Auth::user()->role === 'admin')
-                            {{ url('/admin/dashboard') }}
-                        @elseif(Auth::user()->role === 'faculty')
-                            {{ url('/faculty/dashboard') }}
-                        @elseif(Auth::user()->role === 'student')
-                            {{ url('/student/dashboard') }}
-                        @else
-                            {{ url('/') }}
-                        @endif
-                    @else
-                        {{ url('/') }}
-                    @endauth">
-                📚 Library
-            </a>
+<a class="navbar-brand d-flex align-items-center"
+   href="@auth
+            @if(Auth::user()->role === 'admin')
+                {{ url('/admin/dashboard') }}
+            @elseif(Auth::user()->role === 'faculty')
+                {{ url('/faculty/dashboard') }}
+            @elseif(Auth::user()->role === 'student')
+                {{ url('/student/dashboard') }}
+            @else
+                {{ url('/') }}
+            @endif
+        @else
+            {{ url('/') }}
+        @endauth">
+
+    <img src="{{ asset('images/hccd_logo.png') }}" 
+         alt="App Logo" 
+         class="me-2" 
+         width="40" 
+         height="40">
+
+    <span>Library</span>
+</a>
+
 
             <div>
                 {{-- Show different buttons for logged-in users vs guests --}}
