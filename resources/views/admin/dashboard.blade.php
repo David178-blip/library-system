@@ -3,6 +3,11 @@
 @section('content')
 <div class="container">
     <h1 class="mb-4 text-center">📚 Admin Dashboard</h1>
+        <div class="d-flex justify-content-end mb-3">
+        <a href="{{ route('books.create') }}" class="btn btn-success">
+            ➕ Add New Book
+        </a>
+    </div>
 
     {{-- Top Stats --}}
     <div class="row">
@@ -43,6 +48,7 @@
         </div>
     </div>
 
+    
     {{-- Recent Activity --}}
     <div class="card mt-4 shadow">
         <div class="card-header bg-primary text-white">

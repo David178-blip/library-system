@@ -71,5 +71,7 @@ Route::middleware('auth')->group(function () {
 // Laravel’s default home route
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::resource('books', BookController::class);
+
 // Auth scaffolding routes (if using Breeze/Jetstream)
 require __DIR__.'/auth.php';

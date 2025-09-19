@@ -40,17 +40,20 @@ public function dashboard() {
         return view('books.create');
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'title'=>'required',
-            'author'=>'required',
-            'isbn'=>'required|unique:books',
-            'copies'=>'required|integer|min:1'
-        ]);
+public function store(Request $request) {
+    $request->validate([
+        'title'  => 'required|string|max:255',
+        'author' => 'required|string|max:255',
+        'isbn'   => 'nullable|unique:books',
+        'copies' => 'required|integer|min:1',
+    ]);
 
-        Book::create($request->all());
-        return redirect()->route('books.index')->with('success','Book added successfully.');
-    }
+    Book::create($request->only(['title','author','isbn','copies']));
+
+    return redirect()->route('books.index')
+        ->with('success', 'Book added successfully.');
+}
+
 
     public function edit(Book $book) {
         return view('books.edit', compact('book'));
@@ -72,4 +75,10 @@ public function dashboard() {
         $book->delete();
         return redirect()->route('books.index')->with('success','Book deleted.');
     }
+
+    public function show(Book $book)
+{
+    return view('books.show', compact('book'));
+}
+
 }
