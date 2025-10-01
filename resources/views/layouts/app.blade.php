@@ -42,6 +42,17 @@
     <span>Library</span>
 </a>
 
+<form action="{{ route('books.search') }}" method="GET" class="d-flex ms-auto">
+    <input 
+        type="text" 
+        name="query" 
+        class="form-control me-2" 
+        placeholder="Search books..."
+        required
+    >
+    <button type="submit" class="btn btn-outline-light">Search</button>
+</form>
+
 
             <div>
                 {{-- Show different buttons for logged-in users vs guests --}}

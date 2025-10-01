@@ -3,11 +3,27 @@
 @section('content')
 <div class="container">
     <h1 class="mb-4 text-center">📚 Admin Dashboard</h1>
-        <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('books.create') }}" class="btn btn-success">
-            ➕ Add New Book
-        </a>
-    </div>
+    
+{{-- Action Buttons --}}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('admin.scan-qr') }}" class="btn btn-primary me-2">
+        📷 Scan QR
+    </a>
+    <a href="{{ route('admin.books.create') }}" class="btn btn-success me-2">
+        ➕ Add New Book
+    </a>
+    <a href="{{ route('admin.reports') }}" class="btn btn-warning me-2">
+        📊 Generate Reports
+    </a>
+    <a href="{{ route('admin.users.index') }}" class="btn btn-dark me-2">
+        👥 Manage Users
+    </a>
+    <a href="{{ route('admin.borrows.requests') }}" class="btn btn-info">
+        📥 Borrow Requests
+    </a>
+</div>
+
+
 
     {{-- Top Stats --}}
     <div class="row">
@@ -48,7 +64,6 @@
         </div>
     </div>
 
-    
     {{-- Recent Activity --}}
     <div class="card mt-4 shadow">
         <div class="card-header bg-primary text-white">
@@ -96,5 +111,45 @@
             </table>
         </div>
     </div>
+
+    {{-- Email Notifications Log --}}
+    <div class="card mt-4 shadow">
+        <div class="card-header bg-success text-white">
+            📧 Email Notifications Sent Today
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Type</th>
+                        <th>Sent At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($emailLogs as $log)
+                        <tr>
+                            <td>{{ $log->user?->name ?? 'N/A' }}</td>
+                            <td>{{ $log->book_title }}</td>
+                            <td>
+                                @if($log->type === 'Reminder')
+                                    <span class="badge bg-info">Reminder</span>
+                                @else
+                                    <span class="badge bg-danger">Overdue</span>
+                                @endif
+                            </td>
+                            <td>{{ $log->sent_at->format('M d, Y h:i A') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No emails sent today.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 @endsection

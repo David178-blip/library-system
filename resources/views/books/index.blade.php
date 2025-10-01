@@ -4,6 +4,31 @@
 <div class="container">
     <h1 class="mb-4">Books</h1>
 
+ @if(isset($searchQuery))
+    <div class="alert alert-info">
+        Showing results for: <strong>{{ $searchQuery }}</strong>
+    </div>
+@endif
+
+@if($books->isEmpty())
+    <p class="text-center text-muted">No books found.</p>
+@else
+    <div class="row">
+        @foreach($books as $book)
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $book->title }}</h5>
+                        <p class="card-text">Author: {{ $book->author }}</p>
+                        <p class="card-text"><small>ISBN: {{ $book->isbn }}</small></p>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+
     <div class="card">
         <div class="card-body">
             <table class="table table-striped">
@@ -35,9 +60,9 @@
 
                                 {{-- Show Admin-only buttons --}}
                                 @if(auth()->user()->role === 'admin')
-                                    <a href="{{ route('books.edit', $book) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="{{ route('admin.books.edit', $book) }}" class="btn btn-warning btn-sm">Edit</a>
 
-                                    <form action="{{ route('books.destroy', $book) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.books.destroy', $book) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm"

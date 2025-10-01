@@ -40,19 +40,27 @@ public function dashboard() {
         return view('books.create');
     }
 
-public function store(Request $request) {
+public function store(Request $request)
+{
     $request->validate([
-        'title'  => 'required|string|max:255',
+        'title' => 'required|string|max:255',
         'author' => 'required|string|max:255',
-        'isbn'   => 'nullable|unique:books',
         'copies' => 'required|integer|min:1',
+        'isbn'   => 'nullable|unique:books',
+        'description' => 'nullable|string',
     ]);
 
-    Book::create($request->only(['title','author','isbn','copies']));
+    Book::create([
+        'title' => $request->title,
+        'author' => $request->author,
+        'copies' => $request->copies,
+        'isbn' => $request->isbn,
+        'description' => $request->description,
+    ]);
 
-    return redirect()->route('books.index')
-        ->with('success', 'Book added successfully.');
+    return redirect()->route('admin.books.index')->with('success', 'Book added successfully!');
 }
+
 
 
     public function edit(Book $book) {
@@ -80,5 +88,19 @@ public function store(Request $request) {
 {
     return view('books.show', compact('book'));
 }
+
+public function search(Request $request)
+{
+    $query = $request->input('query');
+
+    $books = Book::where('title', 'LIKE', "%{$query}%")
+        ->orWhere('author', 'LIKE', "%{$query}%")
+        ->orWhere('isbn', 'LIKE', "%{$query}%")
+        ->get();
+
+    return view('books.search-results', compact('books', 'query'));
+}
+
+
 
 }

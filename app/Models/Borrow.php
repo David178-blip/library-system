@@ -14,6 +14,7 @@ class Borrow extends Model
         'due_at',
         'returned_at',
         'status',
+        'approval',
     ];
 
        protected $dates = [

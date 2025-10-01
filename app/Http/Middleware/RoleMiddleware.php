@@ -12,9 +12,19 @@ class RoleMiddleware {
             return redirect('/login');
         }
 
-        if (!in_array(Auth::user()->role, $roles)) {
-            abort(403, 'Unauthorized');
-        }
+if (!in_array(Auth::user()->role, $roles)) {
+    switch (Auth::user()->role) {
+        case 'admin':
+            return redirect()->route('admin.dashboard')->with('error', 'Access denied.');
+        case 'student':
+            return redirect()->route('student.dashboard')->with('error', 'Access denied.');
+        case 'faculty':
+            return redirect()->route('faculty.dashboard')->with('error', 'Access denied.');
+        default:
+            Auth::logout();
+            return redirect('/login');
+    }
+}
 
         return $next($request);
     }
