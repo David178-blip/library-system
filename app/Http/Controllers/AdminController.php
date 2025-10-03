@@ -5,29 +5,42 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Borrow;
-use App\Models\EmailLog;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use PDF; // from barryvdh/laravel-dompdf
+use PDF; 
+use App\Models\Notification;
 
 class AdminController extends Controller
 {
     /**
      * Show the admin dashboard.
      */
-    public function dashboard()
-    {
-        $books = Book::count();
-        $users = User::count();
-        $borrows = Borrow::count();
-        $overdue = Borrow::where('status', 'overdue')->count();
-        $recentBorrows = Borrow::latest()->take(10)->get();
 
-        // Get today’s sent emails
-        $emailLogs = EmailLog::whereDate('sent_at', now())->latest()->take(10)->get();
 
-        return view('admin.dashboard', compact('books', 'users', 'borrows', 'overdue', 'recentBorrows', 'emailLogs'));
-    }
+public function dashboard()
+{
+    $books = Book::count();
+    $users = User::count();
+    $borrows = Borrow::count();
+    $overdue = Borrow::where('status', 'borrowed')->where('due_at', '<', now())->count();
+    $recentBorrows = Borrow::with('book', 'user')->latest()->take(5)->get();
+
+
+    $notifications = Notification::with('user')
+        ->latest()
+        ->take(10)
+        ->get();
+
+    return view('admin.dashboard', compact(
+        'books',
+        'users',
+        'borrows',
+        'overdue',
+        'recentBorrows',
+        'notifications'
+    ));
+}
+
 
     /**
      * Show reports page.
@@ -72,38 +85,44 @@ public function borrowRequests()
 
 public function approveBorrow(Borrow $borrow)
 {
-    // safety: ensure still available
     $book = $borrow->book;
     if ($book->copies < 1) {
         return back()->with('error','Cannot approve: no copies left.');
     }
 
-    // set approval and status, set borrowed/due dates
     $borrow->update([
         'approval'    => 'approved',
         'status'      => 'borrowed',
-        'borrowed_at' => Carbon::today(),
-        'due_at'      => Carbon::today()->addDays(7),
+        'borrowed_at' => now(),
+        'due_at'      => now()->addDays(7),
     ]);
 
-    // decrement copies
     $book->decrement('copies');
 
+    // ✅ Send in-app notification
+    Notification::create([
+        'user_id' => $borrow->user_id,
+        'title'   => 'Borrow Approved',
+        'message' => 'Your request for "' . $book->title . '" has been approved.',
+    ]);
 
     return back()->with('success','Borrow request approved.');
 }
+
 
 public function rejectBorrow(Borrow $borrow)
 {
     $borrow->update([
         'approval' => 'rejected',
-        'status'   => 'rejected', // optional
+        'status'   => 'rejected',
     ]);
 
-    /* Optionally notify user
-    if ($borrow->user && $borrow->user->email) {
-        Mail::to($borrow->user->email)->send(new \App\Mail\BorrowRejectedMail($borrow));
-    }*/
+    // ✅ Notify user
+    Notification::create([
+        'user_id' => $borrow->user_id,
+        'title'   => 'Borrow Rejected',
+        'message' => 'Your request for "' . $borrow->book->title . '" has been rejected.',
+    ]);
 
     return back()->with('error','Borrow request rejected.');
 }

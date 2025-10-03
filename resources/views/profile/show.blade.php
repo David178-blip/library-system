@@ -14,7 +14,12 @@
             {{-- QR Code --}}
             <div class="d-flex justify-content-center mb-3">
                 <div class="qr-container">
-                    {!!QrCode::size(200)->generate(route('profile.show', $user->id))!!}
+                    @php
+    $qrUrl = url('/admin/return/' . auth()->user()->id);
+@endphp
+
+{!!QrCode::size(200)->generate($qrUrl) !!}
+
                 </div>
             </div>
             <p class="text-muted text-center mb-4">Scan to access this profile</p>

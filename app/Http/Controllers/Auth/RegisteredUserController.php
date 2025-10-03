@@ -28,23 +28,33 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'role' => ['required', 'in:student,faculty'], // ✅ Ensure role is validated
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $request->role, // ✅ Save role
+    ]);
 
-        event(new Registered($user));
+    event(new Registered($user));
+    Auth::login($user);
 
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+    // ✅ Redirect based on role
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'faculty') {
+        return redirect()->route('faculty.dashboard');
+    } elseif ($user->role === 'student') {
+        return redirect()->route('student.dashboard');
     }
+
+    return redirect('/'); // Fallback
+}
 }

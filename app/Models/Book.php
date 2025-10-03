@@ -8,9 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model {
     use HasFactory;
 
-    protected $fillable = [
-        'title','author','year','isbn','copies'
-    ];
+  protected $fillable = [
+    'num_volumes',
+    'class_no',
+    'title',
+    'author',
+    'publisher',
+    'publication_place',
+    'copyright_year',
+];
+
 
     public function borrows() {
         return $this->hasMany(Borrow::class);

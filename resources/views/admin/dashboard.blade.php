@@ -111,45 +111,39 @@
             </table>
         </div>
     </div>
-
-    {{-- Email Notifications Log --}}
-    <div class="card mt-4 shadow">
-        <div class="card-header bg-success text-white">
-            📧 Email Notifications Sent Today
-        </div>
-        <div class="card-body p-0">
-            <table class="table table-striped mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>User</th>
-                        <th>Book</th>
-                        <th>Type</th>
-                        <th>Sent At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($emailLogs as $log)
-                        <tr>
-                            <td>{{ $log->user?->name ?? 'N/A' }}</td>
-                            <td>{{ $log->book_title }}</td>
-                            <td>
-                                @if($log->type === 'Reminder')
-                                    <span class="badge bg-info">Reminder</span>
-                                @else
-                                    <span class="badge bg-danger">Overdue</span>
-                                @endif
-                            </td>
-                            <td>{{ $log->sent_at->format('M d, Y h:i A') }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">No emails sent today.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+{{-- In-App Email Log --}}
+<div class="card mt-4 shadow">
+    <div class="card-header bg-success text-white">
+        🔔 Emails Sent Today
     </div>
+    <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Message</th>
+                    <th>Sent At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($notifications as $note)
+                    <tr>
+                        <td>{{ $note->user?->name ?? 'N/A' }}</td>
+                        <td>{{ $note->title }}</td>
+                        <td>{{ $note->message }}</td>
+                        <td>{{ $note->created_at->format('M d, Y h:i A') }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No Emails yet.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 </div>
 @endsection

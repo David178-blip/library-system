@@ -86,4 +86,28 @@ public function store(Request $request, Book $book)
 
         return redirect()->route('admin.dashboard')->with('success', 'Book assigned to ' . $user->name);
     }
+    public function showReturnForm($userId)
+{
+    $borrows = \App\Models\Borrow::with('book')
+        ->where('user_id', $userId)
+        ->whereNull('returned_at')
+        ->get();
+
+    return view('admin.return-books', compact('borrows', 'userId'));
+}
+
+public function markReturned($borrowId)
+{
+    $borrow = \App\Models\Borrow::findOrFail($borrowId);
+    
+    $borrow->returned_at = now();
+    $borrow->status = 'returned';
+    $borrow->save();
+
+    // ✅ Optionally, increase book copies again
+    $borrow->book->increment('copies');
+
+    return back()->with('success', 'Book marked as returned.');
+}
+
 }

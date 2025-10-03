@@ -30,8 +30,9 @@
                 <tr>
                     <td>{{ $borrow->user->name }}</td>
                     <td>{{ $borrow->book->title }}</td>
-                    <td>{{ $borrow->borrowed_at->format('M d, Y') }}</td>
-                    <td>{{ $borrow->due_at->format('M d, Y') }}</td>
+                    <td>{{ optional($borrow->borrowed_at)->format('M d, Y') ?? '—' }}</td>
+                    <td>{{ optional($borrow->due_at)->format('M d, Y') ?? '—' }}</td>
+
                     <td>{{ ucfirst($borrow->status) }}</td>
                 </tr>
             @endforeach
@@ -52,7 +53,8 @@
                 <tr>
                     <td>{{ $borrow->user->name }}</td>
                     <td>{{ $borrow->book->title }}</td>
-                    <td>{{ $borrow->due_at->format('M d, Y') }}</td>
+                    <td>{{ optional($borrow->due_at)->format('M d, Y') ?? '—' }}</td>
+
                 </tr>
             @empty
                 <tr>

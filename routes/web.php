@@ -11,6 +11,9 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\UserController;
 use App\Models\Book;
+use App\Models\Borrow;
+use App\Models\User;
+use App\Http\Controllers\NotificationController;
 
 // =========================
 // Public Routes
@@ -27,6 +30,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/scan-qr', function () {
         return view('admin.scan-qr');
     })->name('scan-qr');
+
+    // Return book after scanning QR
+    Route::get('/admin/return/{user}', [BorrowController::class, 'showReturnForm'])
+         ->name('admin.return.form');
+         
+    Route::post('/admin/return-book/{borrow}', [BorrowController::class, 'markReturned'])
+         ->name('admin.return.book');
 
     // Assign book after scanning QR
     Route::get('/user/{user}/borrow', [BorrowController::class, 'assign'])->name('assign.borrow');
@@ -88,9 +98,26 @@ Route::get('books/search', [BookController::class, 'search'])->name('books.searc
     // AI Chat
     Route::post('ai/chat', [ChatbotController::class, 'chat'])->name('ai.chat');
 
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
 
 
 });
+
+Route::get('/dashboard', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        if ($role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($role === 'faculty') {
+            return redirect()->route('faculty.dashboard');
+        } elseif ($role === 'student') {
+            return redirect()->route('student.dashboard');
+        }
+    }
+    return redirect('/');
+});
+
 
 // =========================
 // Default Home

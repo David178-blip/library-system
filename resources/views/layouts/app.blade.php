@@ -14,66 +14,102 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
 
-            {{-- 📚 Logo goes to correct dashboard --}}
-<a class="navbar-brand d-flex align-items-center"
-   href="@auth
-            @if(Auth::user()->role === 'admin')
-                {{ url('/admin/dashboard') }}
-            @elseif(Auth::user()->role === 'faculty')
-                {{ url('/faculty/dashboard') }}
-            @elseif(Auth::user()->role === 'student')
-                {{ url('/student/dashboard') }}
-            @else
-                {{ url('/') }}
-            @endif
-        @else
-            {{ url('/') }}
-        @endauth">
+        {{-- ✅ Logo & App Name --}}
+        <a class="navbar-brand d-flex align-items-center"
+           href="@auth
+                    @if(Auth::user()->role === 'admin')
+                        {{ url('/admin/dashboard') }}
+                    @elseif(Auth::user()->role === 'faculty')
+                        {{ url('/faculty/dashboard') }}
+                    @elseif(Auth::user()->role === 'student')
+                        {{ url('/student/dashboard') }}
+                    @else
+                        {{ url('/') }}
+                    @endif
+                @else
+                    {{ url('/') }}
+                @endauth">
 
-    <img src="{{ asset('images/hccd_logo.png') }}" 
-         alt="App Logo" 
-         class="me-2" 
-         width="40" 
-         height="40">
+            <img src="{{ asset('images/hccd_logo.png') }}"
+                 alt="App Logo"
+                 class="me-2"
+                 width="50"
+                 height="50">
 
-    <span>Library</span>
-</a>
+            <span class="fs-4 fw-bold">HCCD Library</span>
+        </a>
 
-<form action="{{ route('books.search') }}" method="GET" class="d-flex ms-auto">
-    <input 
-        type="text" 
-        name="query" 
-        class="form-control me-2" 
-        placeholder="Search books..."
-        required
-    >
-    <button type="submit" class="btn btn-outline-light">Search</button>
-</form>
+        {{-- ✅ Mobile Toggler --}}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        {{-- ✅ Collapsible Content --}}
+        <div class="collapse navbar-collapse" id="navbarNav">
 
-            <div>
-                {{-- Show different buttons for logged-in users vs guests --}}
+            {{-- ✅ Search Bar (Centered on larger screens) --}}
+            <form action="{{ route('books.search') }}" method="GET" class="d-flex mx-auto my-2 my-lg-0" style="max-width: 400px;">
+                <input
+                    type="text"
+                    name="query"
+                    class="form-control me-2"
+                    placeholder="Search books..."
+                    required
+                >
+                <button type="submit" class="btn btn-light">Search</button>
+            </form>
+
+            {{-- ✅ Right Side Buttons --}}
+            <ul class="navbar-nav ms-auto d-flex align-items-center">
+
                 @auth
-                    <a href="{{ route('profile') }}" class="btn btn-light btn-sm">Profile</a>
+                    {{-- ✅ Emails --}}
+                    <li class="nav-item me-2">
+                        <a href="{{ route('notifications.index') }}" class="btn btn-warning btn-sm">
+                            🔔 Emails
+                        </a>
+                    </li>
 
-                    <a href="{{ route('books.index') }}" class="btn btn-info btn-sm">Books</a>
+                    {{-- ✅ Profile --}}
+                    <li class="nav-item me-2">
+                        <a href="{{ route('profile') }}" class="btn btn-light btn-sm">
+                            Profile
+                        </a>
+                    </li>
 
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-                    </form>
+                    {{-- ✅ Books --}}
+                    <li class="nav-item me-2">
+                        <a href="{{ route('books.index') }}" class="btn btn-info btn-sm">
+                            Books
+                        </a>
+                    </li>
+
+                    {{-- ✅ Logout --}}
+                    <li class="nav-item">
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                        </form>
+                    </li>
                 @endauth
 
                 @guest
-                    <a href="{{ route('login') }}" class="btn btn-light btn-sm">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-success btn-sm">Register</a>
+                    <li class="nav-item me-2">
+                        <a href="{{ route('login') }}" class="btn btn-light btn-sm">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('register') }}" class="btn btn-success btn-sm">Register</a>
+                    </li>
                 @endguest
-            </div>
+
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
     <main class="container">
         @if(session('success'))
@@ -89,36 +125,112 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
 
-    <!-- Floating Chatbot Button -->
-    <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
-        <button id="chatbot-toggle" class="btn btn-primary rounded-circle p-3">
-            💬
-        </button>
+  <!-- ✅ Chatbot Toggle Button -->
+<button id="toggleChatbot" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+">
+💬
+</button>
+
+<!-- ✅ Chatbot Container -->
+<div id="chatbotContainer" style="
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+">
+    <div style="background: #007bff; color: white; padding: 10px; font-weight: bold;">
+        📚 Library Chatbot
+        <button id="closeChatbot" style="
+            float: right;
+            background: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        ">✖</button>
     </div>
 
-    <!-- Dialogflow Messenger -->
-    <df-messenger
-        intent="WELCOME"
-        chat-title="Library Assistant"
-        agent-id="YOUR_DIALOGFLOW_AGENT_ID"
-        language-code="en"
-    ></df-messenger>
+    <div id="chatbotMessages" style="flex: 1; padding: 10px; overflow-y: auto;"></div>
 
-    <script>
-        // Show/Hide chatbot
-        document.getElementById('chatbot-toggle').addEventListener('click', function() {
-            const messenger = document.querySelector('df-messenger');
-            messenger.style.display = (messenger.style.display === 'none') ? 'block' : 'none';
-        });
+    <div style="padding: 10px; display: flex; gap: 5px;">
+        <input type="text" id="chatbotInput" placeholder="Type a message..." style="flex: 1; padding: 5px;">
+        <button id="sendChatbotMessage" style="padding: 5px 10px;">Send</button>
+    </div>
+</div>
 
-        // Hide by default
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('df-messenger').style.display = 'none';
-        });
-    </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggleChatbot");
+    const closeBtn = document.getElementById("closeChatbot");
+    const chatbot = document.getElementById("chatbotContainer");
+    const messages = document.getElementById("chatbotMessages");
+    const input = document.getElementById("chatbotInput");
+    const sendBtn = document.getElementById("sendChatbotMessage");
 
-    <!-- Dialogflow Web Messenger Library -->
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    // ✅ Toggle open
+    toggleBtn.addEventListener("click", () => {
+        chatbot.style.display = chatbot.style.display === "none" ? "flex" : "none";
+    });
+
+    // ✅ Close button
+    closeBtn.addEventListener("click", () => {
+        chatbot.style.display = "none";
+    });
+
+    function appendMessage(sender, text) {
+        const msgDiv = document.createElement("div");
+        msgDiv.style.marginBottom = "8px";
+        msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        messages.appendChild(msgDiv);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        
+        appendMessage("You", text);
+        input.value = "";
+
+        try {
+            const response = await fetch("http://localhost:3000/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ message: text })
+            });
+
+            const data = await response.json();
+            appendMessage("Bot", data.reply);
+        } catch (error) {
+            appendMessage("Bot", "⚠️ Unable to connect to the server.");
+        }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+    });
+});
+</script>
+
 
 </body>
 </html>

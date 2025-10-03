@@ -14,8 +14,7 @@
         @guest
             <a href="{{ route('login') }}" class="btn btn-primary btn-lg me-2">Login</a>
             <a href="{{ route('register') }}" class="btn btn-success btn-lg">Register</a>
-        @else
-            <a href="{{ route('dashboard') }}" class="btn btn-danger btn-lg">Go to Dashboard</a>
+     
         @endguest
     </div>
 
@@ -32,7 +31,7 @@
                             <div class="card-body">
                                 <h5 class="card-title text-primary">{{ $book->title }}</h5>
                                 <p class="card-text text-muted">by {{ $book->author }}</p>
-                                <p><strong>Category:</strong> {{ $book->category }}</p>
+                
                                 <p><strong>Available Copies:</strong> {{ $book->copies }}</p>
                             </div>
                         </div>

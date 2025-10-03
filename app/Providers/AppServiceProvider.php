@@ -22,13 +22,20 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public static function redirectTo()
+  public static function redirectToDashboard()
 {
     $user = auth()->user();
+
     if ($user->role === 'admin') {
         return '/admin/dashboard';
+    } elseif ($user->role === 'faculty') {
+        return '/faculty/dashboard';
+    } elseif ($user->role === 'student') {
+        return '/student/dashboard';
     }
-    return '/user/books';
+
+    return '/';
 }
+
 
 }
