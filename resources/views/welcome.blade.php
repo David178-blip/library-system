@@ -31,7 +31,7 @@
                             <div class="card-body">
                                 <h5 class="card-title text-primary">{{ $book->title }}</h5>
                                 <p class="card-text text-muted">by {{ $book->author }}</p>
-                
+
                                 <p><strong>Available Copies:</strong> {{ $book->copies }}</p>
                             </div>
                         </div>

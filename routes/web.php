@@ -24,35 +24,36 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    // QR Scanner
+    // ✅ Scan Page
     Route::get('/scan-qr', function () {
         return view('admin.scan-qr');
     })->name('scan-qr');
 
-    // Return book after scanning QR
-    Route::get('/admin/return/{user}', [BorrowController::class, 'showReturnForm'])
-         ->name('admin.return.form');
-         
-    Route::post('/admin/return-book/{borrow}', [BorrowController::class, 'markReturned'])
-         ->name('admin.return.book');
+    // ✅ Return (after QR scan)
+    Route::get('/return/{user}', [BorrowController::class, 'showReturnForm'])
+         ->name('return.form');
 
-    // Assign book after scanning QR
+    Route::post('/return-book/{borrow}', [BorrowController::class, 'markReturned'])
+         ->name('return.book');
+    
+    // ✅ Assign Borrow
     Route::get('/user/{user}/borrow', [BorrowController::class, 'assign'])->name('assign.borrow');
     Route::post('/user/{user}/borrow', [BorrowController::class, 'store'])->name('borrow.store');
 
-    // Books (CRUD only for admin)
+    // Books
     Route::resource('books', BookController::class);
 
     // Reports
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
     Route::get('/reports/download', [AdminController::class, 'downloadReport'])->name('reports.download');
 
-    // User management
+    // Users
     Route::resource('users', UserController::class);
 
-    // Borrow approval ✅ FIXED
+    // Borrow Approval
     Route::get('/borrows/requests', [AdminController::class, 'borrowRequests'])->name('borrows.requests');
     Route::post('/borrows/{borrow}/approve', [AdminController::class, 'approveBorrow'])->name('borrows.approve');
     Route::post('/borrows/{borrow}/reject', [AdminController::class, 'rejectBorrow'])->name('borrows.reject');

@@ -13,15 +13,20 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
 function onScanSuccess(decodedText, decodedResult) {
-    // Show scanned data
     document.getElementById('qr-result').innerText = decodedText;
 
-    // Redirect to user profile (or auto-borrow form)
-    window.location.href = "/admin/user/" + decodedText + "/borrow";
+    // ✅ Extract numeric ID from scanned text (e.g., "USER:3 - Student")
+    const userIdMatch = decodedText.match(/\d+/); 
+    if (userIdMatch) {
+        const userId = userIdMatch[0];
+        // ✅ Redirect to the return form route
+        window.location.href = "/admin/return/" + userId;
+    } else {
+        alert("Invalid QR format. No user ID found.");
+    }
 }
 
 function onScanFailure(error) {
-    // Ignore scan errors (happens when no QR is detected)
     console.warn(`QR error = ${error}`);
 }
 
@@ -30,4 +35,5 @@ let html5QrcodeScanner = new Html5QrcodeScanner(
 );
 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 </script>
+
 @endsection
