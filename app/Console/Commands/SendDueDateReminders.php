@@ -4,64 +4,47 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Borrow;
-use App\Mail\DueDateReminderMail;
-use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
-use App\Mail\OverdueNoticeMail;
-use App\Models\EmailLog;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DueDateReminderMail; // if you want email
+use App\Notifications\OverdueNotification; // if you want in-app
 
 class SendDueDateReminders extends Command
 {
-    protected $signature = 'library:send-reminders';
-    protected $description = 'Send due date reminders to users';
+    protected $signature = 'overdues:check';
+    protected $description = 'Mark borrows overdue and notify users';
 
     public function handle()
     {
-        $tomorrow = Carbon::tomorrow();
+        $today = Carbon::today();
 
-        $borrows = Borrow::where('status', 'borrowed')
-            ->whereDate('due_at', $tomorrow)
-            ->with('user', 'book')
+        // Select borrows that are not returned, currently 'borrowed' and due before today
+        $borrows = Borrow::with('user','book')
+            ->whereNull('returned_at')
+            ->where('status', 'borrowed')
+            ->whereDate('due_at', '<', $today)
             ->get();
 
-        $reminders = $borrows->filter(function ($borrow) use ($tomorrow) {
-            return Carbon::parse($borrow->due_at)->isSameDay($tomorrow);
-        });
-foreach ($reminders as $borrow) {
-    if ($borrow->user && $borrow->user->email) {
-        Mail::to($borrow->user->email)->send(new DueDateReminderMail($borrow));
+        foreach ($borrows as $borrow) {
+            try {
+                $borrow->status = 'overdue';
+                $borrow->save();
 
-        EmailLog::create([
-            'user_id' => $borrow->user->id,
-            'type' => 'Reminder',
-            'book_title' => $borrow->book->title,
-        ]);
+                // Send in-app notification (database)
+                if ($borrow->user) {
+                    $borrow->user->notify(new SendDueDateReminders($borrow));
+                }
 
-        $this->info("Reminder sent to {$borrow->user->email} for book: {$borrow->book->title}");
-    }
-}
+                // Optional: send email if you use mailer
+                // Mail::to($borrow->user->email)->send(new DueDateReminderMail($borrow));
 
-        $overdues = Borrow::where('status', 'borrowed')
-            ->whereDate('due_at', '<', Carbon::today())
-            ->with('user', 'book')
-            ->get();
-foreach ($overdues as $borrow) {
-    if ($borrow->user && $borrow->user->email) {
-        Mail::to($borrow->user->email)->send(new OverdueNoticeMail($borrow));
+                $this->info("Marked overdue: borrow_id={$borrow->id}");
+            } catch (\Throwable $e) {
+                Log::error("Overdue marking failed for borrow {$borrow->id}: ".$e->getMessage());
+            }
+        }
 
-        EmailLog::create([
-            'user_id' => $borrow->user->id,
-            'type' => 'Overdue',
-            'book_title' => $borrow->book->title,
-        ]);
-
-        $this->info("Overdue notice sent to {$borrow->user->email} for book: {$borrow->book->title}");
-    }
-
-    $borrow->update(['status' => 'overdue']);
-}
- 
-
-        return 0;
+        $this->info('Overdue check completed.');
     }
 }

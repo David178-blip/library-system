@@ -47,6 +47,7 @@
                         <th>Status</th>
                         <th>Borrowed At</th>
                         <th>Due Date</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,6 +56,7 @@
                             <td>{{ $borrow->book->title }}</td>
                             <td><span class="badge bg-secondary">{{ ucfirst($borrow->status) }}</span></td>
                           <td>{{ $borrow->borrowed_at ? $borrow->borrowed_at->format('M d, Y') : 'N/A' }}</td>
+                            <td>{{ $borrow->due_at ? $borrow->due_at->format('M d, Y') : 'N/A' }}</td>
         <td>{{ $borrow->returned_at ? $borrow->returned_at->format('M d, Y') : 'Not returned' }}</td>
                         </tr>
                     @empty
