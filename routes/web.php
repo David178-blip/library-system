@@ -14,6 +14,7 @@ use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\User;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AttendanceController;
 
 // =========================
 // Public Routes
@@ -57,6 +58,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/borrows/requests', [AdminController::class, 'borrowRequests'])->name('borrows.requests');
     Route::post('/borrows/{borrow}/approve', [AdminController::class, 'approveBorrow'])->name('borrows.approve');
     Route::post('/borrows/{borrow}/reject', [AdminController::class, 'rejectBorrow'])->name('borrows.reject');
+
+    // =========================
+// Attendance Report (Admin)
+// =========================
+Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+
 });
 
 
@@ -100,6 +107,12 @@ Route::get('books/search', [BookController::class, 'search'])->name('books.searc
     Route::post('ai/chat', [ChatbotController::class, 'chat'])->name('ai.chat');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+    // =========================
+// Attendance (Manual Entry)
+// =========================
+Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
 
 
 

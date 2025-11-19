@@ -1,82 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4 text-center">📚 Admin Dashboard</h1>
-    
-{{-- Action Buttons --}}
-<div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('admin.scan-qr') }}" class="btn btn-primary me-2">
-        📷 Scan QR
-    </a>
-    <a href="{{ route('admin.books.create') }}" class="btn btn-success me-2">
-        ➕ Add New Book
-    </a>
-    <a href="{{ route('admin.reports') }}" class="btn btn-warning me-2">
-        📊 Generate Reports
-    </a>
-    <a href="{{ route('admin.users.index') }}" class="btn btn-dark me-2">
-        👥 Manage Users
-    </a>
-    <a href="{{ route('admin.borrows.requests') }}" class="btn btn-info">
-        📥 Borrow Requests
-    </a>
-</div>
+<div class="container-fluid">
 
+    {{-- ===== Dashboard Header ===== --}}
+    <div class="mb-4">
+        <h1 class="fw-bold text-primary"><i class="bi bi-speedometer2"></i> Admin Dashboard</h1>
+        <p class="text-muted">Manage books, users, and monitor library activity.</p>
+    </div>
 
-
-    {{-- Top Stats --}}
-    <div class="row">
+ 
+    {{-- ===== Summary Cards ===== --}}
+    <div class="row g-3">
         <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3 shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Total Books</h5>
-                    <p class="card-text display-6">{{ $books }}</p>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary">Total Books</h6>
+                    <h3 class="fw-bold text-primary">{{ $books }}</h3>
                 </div>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3 shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Total Users</h5>
-                    <p class="card-text display-6">{{ $users }}</p>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary">Total Users</h6>
+                    <h3 class="fw-bold text-primary">{{ $users }}</h3>
                 </div>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card text-white bg-info mb-3 shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Books Borrowed</h5>
-                    <p class="card-text display-6">{{ $borrows }}</p>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary">Books Borrowed</h6>
+                    <h3 class="fw-bold text-success">{{ $borrows }}</h3>
                 </div>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card text-white bg-dark mb-3 shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Overdue Books</h5>
-                    <p class="card-text display-6">{{ $overdue }}</p>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary">Overdue Books</h6>
+                    <h3 class="fw-bold text-danger">{{ $overdue }}</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Recent Activity --}}
-    <div class="card mt-4 shadow">
-        <div class="card-header bg-primary text-white">
-            Recent Borrow Activity
+    {{-- ===== Recent Borrow Activity ===== --}}
+    <div class="card mt-4 border-0 shadow-sm">
+        <div class="card-header bg-primary text-white fw-semibold">
+            <i class="bi bi-clock-history"></i> Recent Borrow Activity
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
-                <thead class="table-dark">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-primary">
                     <tr>
                         <th>Book</th>
                         <th>User</th>
-                        <th>Borrowed At</th>
-                        <th>Due At</th>
+                        <th>Borrowed</th>
+                        <th>Due</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -89,7 +71,7 @@
                             <td>
                                 {{ $borrow->due_at?->format('M d, Y') ?? '—' }}
                                 @if($borrow->status === 'borrowed' && $borrow->due_at && $borrow->due_at->isPast())
-                                    <span class="badge bg-danger">Overdue</span>
+                                    <span class="badge bg-danger ms-1">Overdue</span>
                                 @endif
                             </td>
                             <td>
@@ -104,46 +86,45 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted">No recent borrow activity.</td>
+                            <td colspan="5" class="text-center text-muted py-3">No recent borrow activity.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-{{-- In-App Email Log --}}
-<div class="card mt-4 shadow">
-    <div class="card-header bg-success text-white">
-        🔔 Emails Sent Today
-    </div>
-    <div class="card-body p-0">
-        <table class="table table-striped mb-0">
-            <thead class="table-dark">
-                <tr>
-                    <th>User</th>
-                    <th>Title</th>
-                    <th>Message</th>
-                    <th>Sent At</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($notifications as $note)
-                    <tr>
-                        <td>{{ $note->user?->name ?? 'N/A' }}</td>
-                        <td>{{ $note->title }}</td>
-                        <td>{{ $note->message }}</td>
-                        <td>{{ $note->created_at->format('M d, Y h:i A') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">No Emails yet.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
 
-
+    {{-- ===== Notifications ===== --}}
+    <div class="card mt-4 border-0 shadow-sm">
+        <div class="card-header bg-danger text-white fw-semibold">
+            <i class="bi bi-envelope"></i> Emails Sent Today
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-danger">
+                    <tr>
+                        <th>User</th>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>Sent At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($notifications as $note)
+                        <tr>
+                            <td>{{ $note->user?->name ?? 'N/A' }}</td>
+                            <td>{{ $note->title }}</td>
+                            <td>{{ $note->message }}</td>
+                            <td>{{ $note->created_at->format('M d, Y h:i A') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-3">No emails sent yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection
