@@ -5,7 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "start": "node server.js"
+        "start": "node server.js",
+        "dev:all": "concurrently \"php artisan serve\" \"node server.js\" \"npm run dev\""
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
