@@ -13,9 +13,9 @@ class CreateAttendanceTable extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // full name of student or faculty
-            $table->enum('role', ['student', 'faculty'])->default('student');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('time_in')->useCurrent();
+            $table->timestamp('time_out')->nullable();
             $table->timestamps(); // created_at, updated_at
         });
     }

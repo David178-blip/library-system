@@ -1,32 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <div class="card shadow p-4">
-        <h3 class="text-center text-danger mb-4">📘 Library Attendance</h3>
+<div class="container">
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+    <h2 class="mb-4 fw-bold text-danger">📘 Library Attendance</h2>
+
+    <div class="card p-4 shadow">
+
+        <h4><strong>Name:</strong> {{ $user->name }}</h4>
+        <h5><strong>Role:</strong> {{ ucfirst($user->role) }}</h5>
+        <h5><strong>Course:</strong> {{ $user->course ?? '-' }}</h5>
+
+        <h3 class="mt-3">
+            Current Time: <span id="clock" class="text-primary fw-bold"></span>
+        </h3>
+
+        <hr>
+
+        @if(!$activeAttendance)
+            <form action="{{ route('attendance.timein') }}" method="POST">
+                @csrf
+                <button class="btn btn-success btn-lg w-100">🟢 Time In</button>
+            </form>
+        @else
+            <p><strong>Time In:</strong> {{ $activeAttendance->time_in }}</p>
+
+            <form action="{{ route('attendance.timeout') }}" method="POST">
+                @csrf
+                <button class="btn btn-danger btn-lg w-100">🔴 Time Out</button>
+            </form>
         @endif
 
-        <form method="POST" action="{{ route('attendance.store') }}">
-            @csrf
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Full Name</label>
-                <input type="text" class="form-control" name="name" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Role</label>
-                <select class="form-select" name="role" required>
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-danger w-100">Submit Attendance</button>
-        </form>
     </div>
+
 </div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
 @endsection

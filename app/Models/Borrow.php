@@ -9,27 +9,36 @@ class Borrow extends Model
     protected $fillable = [
         'user_id',
         'book_id',
+        'accession_number', // which physical copy was borrowed
         'status',
         'borrowed_at',
         'due_at',
         'returned_at',
-        'status',
         'approval',
     ];
 
-       protected $dates = [
+    protected $dates = [
         'borrowed_at',
         'due_at',
         'returned_at',
     ];
 
-    // 🔥 This makes borrowed_at and returned_at Carbon instances
-protected $casts = [
-    'borrowed_at' => 'datetime',
-    'due_at' => 'datetime',
-    'returned_at' => 'datetime',
-];
+    // Make dates Carbon instances
+    protected $casts = [
+        'borrowed_at' => 'datetime',
+        'due_at'      => 'datetime',
+        'returned_at' => 'datetime',
+    ];
 
+    // For reports filtering by accession number
+    public function scopeFilterByAccession($query, ?string $accessionNumber)
+    {
+        if ($accessionNumber) {
+            $query->where('accession_number', 'like', '%' . $accessionNumber . '%');
+        }
+
+        return $query;
+    }
 
     public function book()
     {

@@ -10,9 +10,6 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    /**
-     * Override the redirect after login.
-     */
 protected function authenticated($request, $user)
 {
     if ($user->role === 'admin') {
@@ -27,7 +24,7 @@ protected function authenticated($request, $user)
         return redirect()->route('faculty.dashboard');
     }
 
-    return redirect()->route('home'); // fallback
+    return redirect()->route('home'); 
 }
 
 

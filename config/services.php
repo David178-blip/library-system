@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Library Chatbot (Node.js service)
+    |--------------------------------------------------------------------------
+    | URL of the chatbot API. Leave empty to hide the chatbot widget.
+    */
+    'chatbot_url' => env('CHATBOT_URL', ''),
+
 ];

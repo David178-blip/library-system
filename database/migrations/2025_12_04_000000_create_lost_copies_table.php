@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('email_lofs', function (Blueprint $table) {
+        Schema::create('lost_copies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->string('accession_number');
+            $table->timestamp('removed_at')->useCurrent();
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('email_lofs');
+        Schema::dropIfExists('lost_copies');
     }
 };

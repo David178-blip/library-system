@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('books', function (Blueprint $table) {
+            $table->unsignedInteger('total_copies')->default(0);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropColumn('total_copies');
+        });
     }
 };

@@ -8,66 +8,54 @@
     </div>
 
     {{-- ===== Statistics ===== --}}
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
-                    <h6 class="text-secondary">Books Borrowed</h6>
-                    <h3 class="fw-bold text-primary">{{ $borrowedCount ?? 0 }}</h3>
-                </div>
-            </div>
-        </div>
+  
 
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
-                    <h6 class="text-secondary">Books Returned</h6>
-                    <h3 class="fw-bold text-success">{{ $returnedCount ?? 0 }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- ===== Recent Borrow Activity ===== --}}
-    <div class="card mt-4 border-0 shadow-sm">
-        <div class="card-header bg-primary text-white fw-semibold">
-            <i class="bi bi-clock-history"></i> Recent Borrow Activity
+    {{-- Recent Borrow Activity --}}
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-primary text-white fw-semibold py-3">
+            <i class="bi bi-clock-history me-2"></i>Recent Borrow Activity
         </div>
         <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light text-primary">
-                    <tr>
-                        <th>Book</th>
-                        <th>Borrowed At</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($borrows as $borrow)
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-primary">
                         <tr>
-                            <td>{{ $borrow->book->title ?? 'N/A' }}</td>
-                            <td>{{ $borrow->borrowed_at?->format('M d, Y') ?? '—' }}</td>
-                            <td>{{ $borrow->due_at?->format('M d, Y') ?? '—' }}</td>
-                            <td>
-                                @if($borrow->status === 'borrowed')
-                                    <span class="badge bg-info">Borrowed</span>
-                                @elseif($borrow->status === 'returned')
-                                    <span class="badge bg-success">Returned</span>
-                                @elseif($borrow->due_at && $borrow->due_at->isPast())
-                                    <span class="badge bg-danger">Overdue</span>
-                                @else
-                                    <span class="badge bg-secondary">{{ ucfirst($borrow->status) }}</span>
-                                @endif
-                            </td>
+                            <th>Book</th>
+                            <th>Borrowed</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-3">No records found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($borrows as $borrow)
+                            <tr>
+                                <td class="fw-semibold">{{ $borrow->book->title ?? 'N/A' }}</td>
+                                <td>{{ $borrow->borrowed_at?->format('M d, Y') ?? '—' }}</td>
+                                <td>{{ $borrow->due_at?->format('M d, Y') ?? '—' }}</td>
+                                <td>
+                                    @if($borrow->status === 'borrowed')
+                                        <span class="badge bg-info">Borrowed</span>
+                                    @elseif($borrow->status === 'returned')
+                                        <span class="badge bg-success">Returned</span>
+                                    @elseif($borrow->due_at && $borrow->due_at->isPast())
+                                        <span class="badge bg-danger">Overdue</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ ucfirst($borrow->status) }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-5">
+                                    <i class="bi bi-journal-x fs-1 d-block mb-2"></i>
+                                    <p class="mb-0">No borrow records yet.</p>
+                                    <a href="{{ route('books.index') }}" class="btn btn-primary btn-sm mt-2 rounded-3">Browse Books</a>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

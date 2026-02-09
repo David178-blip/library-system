@@ -24,7 +24,7 @@ Route::get('/', function () {
     return view('welcome', compact('books'));
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
@@ -39,6 +39,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::post('/return-book/{borrow}', [BorrowController::class, 'markReturned'])
          ->name('return.book');
+
+    // ✅ Mark book as missing for this user (via QR return screen)
+    Route::post('/return-book/{borrow}/missing', [BorrowController::class, 'markMissing'])
+         ->name('return.book.missing');
     
     // ✅ Assign Borrow
     Route::get('/user/{user}/borrow', [BorrowController::class, 'assign'])->name('assign.borrow');
@@ -62,7 +66,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // =========================
 // Attendance Report (Admin)
 // =========================
-Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+
+    Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+    Route::get('/attendance/download', [AttendanceController::class, 'downloadReport'])->name('attendance.download');
+
 
 });
 
@@ -70,21 +77,21 @@ Route::get('/attendance/report', [AttendanceController::class, 'report'])->name(
 // =========================
 // Student Routes
 // =========================
-Route::middleware(['auth', 'role:student'])->prefix('student')->group(function () {
+Route::middleware(['auth', 'verified', 'role:student'])->prefix('student')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
 });
 
 // =========================
 // Faculty Routes
 // =========================
-Route::middleware(['auth', 'role:faculty'])->prefix('faculty')->group(function () {
+Route::middleware(['auth', 'verified', 'role:faculty'])->prefix('faculty')->group(function () {
     Route::get('/dashboard', [FacultyController::class, 'dashboard'])->name('faculty.dashboard');
 });
 
 // =========================
 // Shared Routes (all logged-in users)
 // =========================
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
         // Book Search
 Route::get('books/search', [BookController::class, 'search'])->name('books.search');
@@ -107,12 +114,17 @@ Route::get('books/search', [BookController::class, 'search'])->name('books.searc
     Route::post('ai/chat', [ChatbotController::class, 'chat'])->name('ai.chat');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // =========================
-// Attendance (Manual Entry)
+// Attendance 
 // =========================
-Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
+Route::middleware('auth')->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance/time-in', [AttendanceController::class, 'timeIn'])->name('attendance.timein');
+    Route::post('/attendance/time-out', [AttendanceController::class, 'timeOut'])->name('attendance.timeout');
+});
+
 
 
 

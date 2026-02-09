@@ -10,46 +10,58 @@
     </div>
 
  
-    {{-- ===== Summary Cards ===== --}}
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary">Total Books</h6>
-                    <h3 class="fw-bold text-primary">{{ $books }}</h3>
+    {{-- Summary Cards --}}
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <a href="{{ route('admin.books.index') }}" class="text-decoration-none text-reset">
+                <div class="card border-0 shadow-sm h-100 clickable-card rounded-3">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-journal-bookmark-fill text-primary fs-2 mb-2 d-block"></i>
+                        <h6 class="text-secondary small text-uppercase mb-1">Total Books</h6>
+                        <h3 class="fw-bold text-primary mb-0">{{ $books }}</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary">Total Users</h6>
-                    <h3 class="fw-bold text-primary">{{ $users }}</h3>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('admin.users.index') }}" class="text-decoration-none text-reset">
+                <div class="card border-0 shadow-sm h-100 clickable-card rounded-3">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-people-fill text-primary fs-2 mb-2 d-block"></i>
+                        <h6 class="text-secondary small text-uppercase mb-1">Total Users</h6>
+                        <h3 class="fw-bold text-primary mb-0">{{ $users }}</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary">Books Borrowed</h6>
-                    <h3 class="fw-bold text-success">{{ $borrows }}</h3>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('admin.reports') }}" class="text-decoration-none text-reset">
+                <div class="card border-0 shadow-sm h-100 clickable-card rounded-3">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-journal-check text-success fs-2 mb-2 d-block"></i>
+                        <h6 class="text-secondary small text-uppercase mb-1">Borrowed</h6>
+                        <h3 class="fw-bold text-success mb-0">{{ $borrows }}</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary">Overdue Books</h6>
-                    <h3 class="fw-bold text-danger">{{ $overdue }}</h3>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('admin.reports', ['status' => 'overdue']) }}" class="text-decoration-none text-reset">
+                <div class="card border-0 shadow-sm h-100 clickable-card rounded-3">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-2 mb-2 d-block"></i>
+                        <h6 class="text-secondary small text-uppercase mb-1">Overdue</h6>
+                        <h3 class="fw-bold text-danger mb-0">{{ $overdue }}</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
-    {{-- ===== Recent Borrow Activity ===== --}}
-    <div class="card mt-4 border-0 shadow-sm">
-        <div class="card-header bg-primary text-white fw-semibold">
-            <i class="bi bi-clock-history"></i> Recent Borrow Activity
+    {{-- Recent Borrow Activity --}}
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-primary text-white fw-semibold py-3">
+            <i class="bi bi-clock-history me-2"></i>Recent Borrow Activity
         </div>
         <div class="card-body p-0">
             <table class="table table-hover align-middle mb-0">
@@ -94,10 +106,10 @@
         </div>
     </div>
 
-    {{-- ===== Notifications ===== --}}
-    <div class="card mt-4 border-0 shadow-sm">
-        <div class="card-header bg-danger text-white fw-semibold">
-            <i class="bi bi-envelope"></i> Emails Sent Today
+    {{-- Emails Sent Today --}}
+    <div class="card mt-4 border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-danger text-white fw-semibold py-3">
+            <i class="bi bi-envelope me-2"></i>Emails Sent Today
         </div>
         <div class="card-body p-0">
             <table class="table table-hover align-middle mb-0">

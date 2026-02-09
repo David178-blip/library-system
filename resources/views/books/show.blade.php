@@ -8,8 +8,8 @@
         <div class="card-body">
             <h5 class="card-title">Author: {{ $book->author }}</h5>
             <p><strong>Publisher:</strong> {{ $book->publisher }}</p>
-            <p><strong>ISBN:</strong> {{ $book->isbn }}</p>
-            <p><strong>Copies Available:</strong> {{ $book->copies }}</p>
+            <p><strong>Year:</strong> {{ $book->year }}</p>
+            <p><strong>Copies Available:</strong> {{ $book->available_copies_count ?? $book->copies }}</p>
         </div>
     </div>
 

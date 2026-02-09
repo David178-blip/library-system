@@ -5,21 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Book extends Model {
+class Book extends Model
+{
     use HasFactory;
 
-  protected $fillable = [
-    'num_volumes',
-    'class_no',
-    'title',
-    'author',
-    'publisher',
-    'publication_place',
-    'copyright_year',
-];
+    // 'copies' = total physical copies for this title
+    protected $fillable = [
+        'title',
+        'author',
+        'year',
+        'copies',
+        'course',
+        'accession_number',
+    ];
 
+    // Individual physical copies (each has an accession_number)
+    public function copies()
+    {
+        return $this->hasMany(BookCopy::class);
+    }
 
-    public function borrows() {
+    // Only available physical copies
+    public function availableCopies()
+    {
+        return $this->hasMany(BookCopy::class)->where('status', 'available');
+    }
+
+    public function borrows()
+    {
         return $this->hasMany(Borrow::class);
     }
 }

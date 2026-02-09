@@ -64,7 +64,7 @@
                             <input class="form-check-input" type="checkbox" name="remember" id="remember">
                             <label class="form-check-label text-muted" for="remember">Remember Me</label>
                         </div>
-                        <a href="#" class="text-decoration-none small text-primary">Forgot Password?</a>
+                       
                     </div>
 
                     <div class="d-grid mb-3">

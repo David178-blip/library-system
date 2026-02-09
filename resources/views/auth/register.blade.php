@@ -70,6 +70,47 @@
                         </div>
                     </div>
 
+<div class="mb-3" id="course-group" style="display: none;">
+    <label for="course" class="form-label fw-semibold text-danger">Course</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-book text-danger"></i>
+        </span>
+        <select id="course" name="course" class="form-select border-start-0 rounded-end-3">
+            <option value="">Select Course</option>
+            <option value="BSIT" {{ old('course') == 'BSIT' ? 'selected' : '' }}>BSIT</option>
+            <option value="BSBA" {{ old('course') == 'BSBA' ? 'selected' : '' }}>BSBA</option>
+            <option value="BSCRIM" {{ old('course') == 'BSCRIM' ? 'selected' : '' }}>BSCRIM</option>
+            <option value="BEED" {{ old('course') == 'BEED' ? 'selected' : '' }}>BEED</option>
+            <option value="BSED" {{ old('course') == 'BSED' ? 'selected' : '' }}>BSED</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    const roleSelect = document.getElementById('role');
+    const courseGroup = document.getElementById('course-group');
+    const courseSelect = document.getElementById('course');
+
+    function toggleCourseField() {
+        if (roleSelect.value === 'student') {
+            courseGroup.style.display = 'block';
+            courseSelect.required = true;
+        } else {
+            courseGroup.style.display = 'none';
+            courseSelect.required = false;
+            courseSelect.value = ''; // reset if switching to faculty
+        }
+    }
+
+    roleSelect.addEventListener('change', toggleCourseField);
+
+    // Trigger on page load
+    toggleCourseField();
+</script>
+
+
+
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold text-danger">Password</label>
                         <div class="input-group">

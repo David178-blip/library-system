@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\EmailCodeVerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -38,6 +39,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
+
+    // 6-digit code verification flow
+    Route::get('verify-code', [EmailCodeVerificationController::class, 'show'])
+        ->name('verification.code.show');
+
+    Route::post('verify-code', [EmailCodeVerificationController::class, 'verify'])
+        ->name('verification.code.verify');
+
+    Route::post('verify-code/resend', [EmailCodeVerificationController::class, 'resend'])
+        ->name('verification.code.resend');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
