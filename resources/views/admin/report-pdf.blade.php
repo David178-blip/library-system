@@ -24,6 +24,34 @@
     <h2>Library Report</h2>
     <p><strong>Date:</strong> {{ now()->format('M d, Y h:i A') }}</p>
 
+    @if(!empty($charts['statusChart']) || !empty($charts['monthlyChart']) || !empty($charts['courseChart']))
+        <div style="page-break-after: always;">
+            <h3>Analytics Overview</h3>
+            <div style="text-align: center; margin-bottom: 20px;">
+                @if(!empty($charts['statusChart']))
+                    <div style="display: inline-block; width: 45%; margin: 10px; vertical-align: top;">
+                        <h4 style="margin-bottom: 5px;">Status Distribution</h4>
+                        <img src="{{ $charts['statusChart'] }}" style="width: 100%; border: 1px solid #ddd;">
+                    </div>
+                @endif
+
+                @if(!empty($charts['courseChart']))
+                    <div style="display: inline-block; width: 45%; margin: 10px; vertical-align: top;">
+                        <h4 style="margin-bottom: 5px;">Borrows by Course</h4>
+                        <img src="{{ $charts['courseChart'] }}" style="width: 100%; border: 1px solid #ddd;">
+                    </div>
+                @endif
+            </div>
+
+            @if(!empty($charts['monthlyChart']))
+                <div style="text-align: center; margin-top: 20px;">
+                    <h4 style="margin-bottom: 5px;">Monthly Trends</h4>
+                    <img src="{{ $charts['monthlyChart'] }}" style="width: 80%; border: 1px solid #ddd;">
+                </div>
+            @endif
+        </div>
+    @endif
+
     <h3>All Borrow Records</h3>
     <table>
         <thead>
@@ -90,7 +118,7 @@
             </tr>
         </thead>
         <tbody>
-            @forelse(($lost ?? collect()) as $lostCopy)
+            @forelse($lost as $lostCopy)
                 <tr>
                     <td>{{ $lostCopy->book->title ?? '—' }}</td>
                     <td>{{ $lostCopy->accession_number }}</td>
@@ -100,7 +128,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" style="text-align: center;">No lost or removed copies.</td>
+                    <td colspan="5" style="text-align: center;">No lost or removed copies.</td>
                 </tr>
             @endforelse
         </tbody>

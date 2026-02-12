@@ -212,12 +212,12 @@ body.dark-mode .page-link:hover { background-color: #3a3a3a; color: #fff; }
                 <li><a href="{{ route('books.index') }}"><i class="bi bi-book"></i><span>Books</span></a></li>
                 <li><a href="{{ route('admin.books.create') }}"><i class="bi bi-plus-circle"></i><span>Add Book</span></a></li>
                 <li><a href="{{ route('admin.reports') }}"><i class="bi bi-bar-chart"></i><span>Reports</span></a></li>
-                <li><a href="{{ route('admin.attendance.report') }}"><i class="bi bi-clipboard-data"></i><span>Attendance Report</span></a></li>
+                {{-- <li><a href="{{ route('admin.attendance.report') }}"><i class="bi bi-clipboard-data"></i><span>Attendance Report</span></a></li> --}}
                 <li><a href="{{ route('admin.users.index') }}"><i class="bi bi-people"></i><span>Users</span></a></li>
             @elseif(Auth::user()->role === 'faculty' || Auth::user()->role === 'student')
                 <li><a href="{{ route(Auth::user()->role . '.dashboard') }}"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
                 <li><a href="{{ route('books.index') }}"><i class="bi bi-book"></i><span>Books</span></a></li>
-                <li><a href="{{ route('attendance.index') }}"><i class="bi bi-pencil-square"></i><span>Library Attendance</span></a></li>
+                {{-- <li><a href="{{ route('attendance.index') }}"><i class="bi bi-pencil-square"></i><span>Library Attendance</span></a></li> --}}
             @endif
         </ul>
 
@@ -261,9 +261,17 @@ body.dark-mode .page-link:hover { background-color: #3a3a3a; color: #fff; }
                 @endguest
 
                 @auth
-                    @if(Auth::user()->role !== 'admin')
-                        <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-bell me-1"></i>Notifications</a>
-                    @endif
+                    <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary btn-sm position-relative">
+                        <i class="bi bi-bell me-1"></i>Notifications
+                        @php
+                            $unreadCount = \App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $unreadCount }}
+                            </span>
+                        @endif
+                    </a>
                     <a href="{{ route('profile') }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-person me-1"></i>Profile</a>
                     <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="d-inline">
                         @csrf

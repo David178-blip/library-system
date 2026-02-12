@@ -7,8 +7,36 @@
         <p class="text-muted">Track your borrowed and returned books.</p>
     </div>
 
-    
-
+    {{-- Summary Cards --}}
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-journal-bookmark text-primary fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Active Borrows</h6>
+                    <h3 class="fw-bold text-primary mb-0">{{ $borrowedCount }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-exclamation-triangle text-danger fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Overdue</h6>
+                    <h3 class="fw-bold text-danger mb-0">{{ $overdueCount }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-clock-history text-success fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Total History</h6>
+                    <h3 class="fw-bold text-success mb-0">{{ $borrows->count() }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Borrow History --}}
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">

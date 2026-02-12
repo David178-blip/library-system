@@ -29,21 +29,24 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
 public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-'email' => [
-            'required',
-            'string',
-            'lowercase',
-            'email',
-            'max:255',
-            'unique:'.User::class,
-        ],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'role' => ['required', 'in:student,faculty'], // role validation
-        'course' => ['required_if:role,student', 'nullable', 'in:BSIT,BSBA,BSCRIM,BEED,BSED'], // course validation
-    ]);
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:'.User::class,
+                'regex:/^[a-zA-Z0-9._%+-]+@holychild\.edu\.ph$/i',
+            ],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:student,faculty'], // role validation
+            'course' => ['required_if:role,student', 'nullable', 'in:BSIT,BSBA,BSCRIM,BEED,BSED'], // course validation
+        ], [
+             'email.regex' => 'Use the Holy Child account',
+         ]);
 
     $user = User::create([
         'name' => $request->name,

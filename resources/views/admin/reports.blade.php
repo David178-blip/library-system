@@ -18,69 +18,83 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">📊 Library Reports & Analytics</h1>
-        <a href="{{ route('admin.reports.download', request()->query()) }}" class="btn btn-success">
-            <i class="bi bi-download"></i> Download PDF Report
-        </a>
+        <div>
+            <form id="download-form" action="{{ route('admin.reports.download') }}" method="POST" class="d-inline">
+                @csrf
+                <!-- Preserve existing filters -->
+                @foreach(request()->except(['statusChart', 'monthlyChart', 'courseChart']) as $key => $value)
+                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                @endforeach
+                <!-- Chart data placeholders -->
+                <input type="hidden" name="statusChart" id="statusChartData">
+                <input type="hidden" name="monthlyChart" id="monthlyChartData">
+                <input type="hidden" name="courseChart" id="courseChartData">
+                
+                <button type="button" onclick="downloadReportWithCharts()" class="btn btn-success shadow-sm">
+                    <i class="bi bi-file-earmark-pdf"></i> Download PDF Report
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Summary Statistics Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Total Borrows</h6>
+                            <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Borrows</h6>
                             <h2 class="mb-0 text-primary">{{ number_format($totalBorrows ?? 0) }}</h2>
                         </div>
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-book text-primary fs-4"></i>
+                        <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-journal-text text-primary fs-3"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Returned</h6>
+                            <h6 class="text-muted small text-uppercase fw-bold mb-1">Returned</h6>
                             <h2 class="mb-0 text-success">{{ number_format($totalReturned ?? 0) }}</h2>
-                            <small class="text-muted">{{ $returnRate ?? 0 }}% return rate</small>
+                            <span class="badge bg-success bg-opacity-10 text-success">{{ $returnRate ?? 0 }}% Rate</span>
                         </div>
-                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-check-circle text-success fs-4"></i>
+                        <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-check2-circle text-success fs-3"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Overdue</h6>
+                            <h6 class="text-muted small text-uppercase fw-bold mb-1">Overdue</h6>
                             <h2 class="mb-0 text-danger">{{ number_format($totalOverdue ?? 0) }}</h2>
                         </div>
-                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-exclamation-triangle text-danger fs-4"></i>
+                        <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-clock-history text-danger fs-3"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Lost Copies</h6>
+                            <h6 class="text-muted small text-uppercase fw-bold mb-1">Lost Copies</h6>
                             <h2 class="mb-0 text-warning">{{ number_format($totalLost ?? 0) }}</h2>
                         </div>
-                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-x-circle text-warning fs-4"></i>
+                        <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-x-octagon text-warning fs-3"></i>
                         </div>
                     </div>
                 </div>
@@ -116,6 +130,10 @@
                             <option value="returned" {{ request('status') == 'returned' ? 'selected' : '' }}>Returned</option>
                             <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
                         </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-primary fw-bold">Select Month</label>
+                        <input type="month" name="month" value="{{ request('month') }}" class="form-control border-primary">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Course</label>
@@ -399,6 +417,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
+function downloadReportWithCharts() {
+    const statusChart = document.getElementById('statusChart');
+    const monthlyChart = document.getElementById('monthlyChart');
+    const courseChart = document.getElementById('courseChart');
+    
+    if (statusChart) document.getElementById('statusChartData').value = statusChart.toDataURL('image/png');
+    if (monthlyChart) document.getElementById('monthlyChartData').value = monthlyChart.toDataURL('image/png');
+    if (courseChart) document.getElementById('courseChartData').value = courseChart.toDataURL('image/png');
+    
+    document.getElementById('download-form').submit();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var colors = {
         primary: 'rgba(13, 110, 253, 0.8)',

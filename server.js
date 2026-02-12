@@ -342,6 +342,6 @@ app.post("/chat", async (req, res) => {
 // START SERVER
 // ==========================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`✅ ${BOT_NAME} running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ ${BOT_NAME} running and accessible on the network at port ${PORT}`);
 });

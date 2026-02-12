@@ -64,7 +64,11 @@
                             <input class="form-check-input" type="checkbox" name="remember" id="remember">
                             <label class="form-check-label text-muted" for="remember">Remember Me</label>
                         </div>
-                       
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="small text-primary text-decoration-none fw-semibold">
+                                Forgot password?
+                            </a>
+                        @endif
                     </div>
 
                     <div class="d-grid mb-3">

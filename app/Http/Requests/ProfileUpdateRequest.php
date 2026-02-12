@@ -23,8 +23,21 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@holychild\.edu\.ph$/i',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+     {
+         return [
+             'email.regex' => 'Use the Holy Child account',
+         ];
+     }
 }

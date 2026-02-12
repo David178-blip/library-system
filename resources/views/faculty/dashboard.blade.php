@@ -8,7 +8,35 @@
     </div>
 
     {{-- ===== Statistics ===== --}}
-  
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-journal-bookmark text-primary fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Active Borrows</h6>
+                    <h3 class="fw-bold text-primary mb-0">{{ $borrowedCount }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-alarm text-warning fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Due Soon</h6>
+                    <h3 class="fw-bold text-warning mb-0">{{ $dueSoonCount }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-3">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-book text-success fs-2 mb-2 d-block"></i>
+                    <h6 class="text-secondary small text-uppercase mb-1">Total Books</h6>
+                    <h3 class="fw-bold text-success mb-0">{{ $booksCount }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Recent Borrow Activity --}}
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">

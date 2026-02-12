@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     // Reports
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
-    Route::get('/reports/download', [AdminController::class, 'downloadReport'])->name('reports.download');
+    Route::post('/reports/download', [AdminController::class, 'downloadReport'])->name('reports.download');
 
     // Users
     Route::resource('users', UserController::class);
@@ -64,11 +64,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::post('/borrows/{borrow}/reject', [AdminController::class, 'rejectBorrow'])->name('borrows.reject');
 
     // =========================
-// Attendance Report (Admin)
-// =========================
-
+    // Attendance Report (Admin) - HIDDEN
+    // =========================
+    /*
     Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
     Route::get('/attendance/download', [AttendanceController::class, 'downloadReport'])->name('attendance.download');
+    */
 
 
 });
@@ -113,17 +114,21 @@ Route::get('books/search', [BookController::class, 'search'])->name('books.searc
     // AI Chat
     Route::post('ai/chat', [ChatbotController::class, 'chat'])->name('ai.chat');
 
+// Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // =========================
-// Attendance 
-// =========================
-Route::middleware('auth')->group(function () {
-    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::post('/attendance/time-in', [AttendanceController::class, 'timeIn'])->name('attendance.timein');
-    Route::post('/attendance/time-out', [AttendanceController::class, 'timeOut'])->name('attendance.timeout');
-});
+    // Attendance - HIDDEN
+    // =========================
+    /*
+    Route::middleware('auth')->group(function () {
+        Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+        Route::post('/attendance/time-in', [AttendanceController::class, 'timeIn'])->name('attendance.timein');
+        Route::post('/attendance/time-out', [AttendanceController::class, 'timeOut'])->name('attendance.timeout');
+    });
+    */
 
 
 

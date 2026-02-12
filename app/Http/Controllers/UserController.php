@@ -43,7 +43,7 @@ public function store(Request $request)
 {
     $rules = [
         'name'     => 'required|string|max:255',
-        'email'    => 'required|string|email|unique:users',
+        'email'    => 'required|string|email|unique:users|regex:/^[a-zA-Z0-9._%+-]+@holychild\.edu\.ph$/i',
         'password' => 'required|string|min:6|confirmed',
         'role'     => 'required|in:admin,student,faculty',
     ];
@@ -53,7 +53,9 @@ public function store(Request $request)
         $rules['course'] = 'required|in:BSIT,BSBA,BSCRIM,BEED,BSED';
     }
 
-    $validated = $request->validate($rules);
+    $validated = $request->validate($rules, [
+         'email.regex' => 'Use the Holy Child account',
+     ]);
 
     User::create([
         'name'     => $validated['name'],
@@ -77,11 +79,13 @@ public function update(Request $request, User $user)
 {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|string|email|unique:users,email,' . $user->id,
+        'email' => 'required|string|email|regex:/^[a-zA-Z0-9._%+-]+@holychild\.edu\.ph$/i|unique:users,email,' . $user->id,
         'role' => 'required|in:admin,student,faculty',
         'course' => 'nullable|string|in:BSIT,BSBA,BSCRIM,BEED,BSED',
         'password' => 'nullable|string|min:6|confirmed',
-    ]);
+    ], [
+         'email.regex' => 'Use the Holy Child account',
+     ]);
 
     $user->name = $validated['name'];
     $user->email = $validated['email'];

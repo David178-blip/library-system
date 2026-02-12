@@ -4,9 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite",
+        "dev": "vite --host",
         "start": "node server.js",
-        "dev:all": "concurrently \"php artisan serve\" \"node server.js\" \"npm run dev\""
+        "serve:all": "concurrently \"php artisan serve --host=0.0.0.0\" \"node server.js\"",
+        "dev:all": "concurrently \"php artisan serve --host=0.0.0.0\" \"node server.js\" \"npm run dev\""
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",

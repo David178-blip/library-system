@@ -32,9 +32,17 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        $notifications = Notification::with('user')
+        // Requests sent to admins (like password resets)
+        $adminNotifications = Notification::where('user_id', auth()->id())
             ->latest()
-            ->take(10)
+            ->take(5)
+            ->get();
+
+        // System-wide notifications (emails sent)
+        $systemNotifications = Notification::with('user')
+            ->where('user_id', '!=', auth()->id())
+            ->latest()
+            ->take(5)
             ->get();
 
         return view('admin.dashboard', compact(
@@ -43,7 +51,8 @@ class AdminController extends Controller
             'borrows',
             'overdue',
             'recentBorrows',
-            'notifications'
+            'adminNotifications',
+            'systemNotifications'
         ));
     }
 
@@ -95,6 +104,13 @@ class AdminController extends Controller
             $query->whereDate('borrowed_at', '<=', $request->to);
         }
 
+        // Filter: Month
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $query->whereYear('borrowed_at', $month->year)
+                  ->whereMonth('borrowed_at', $month->month);
+        }
+
         $borrows = $query->latest()->paginate(10)->withQueryString();
 
         // Overdue books filtered using same criteria
@@ -122,6 +138,12 @@ class AdminController extends Controller
             $overdueQuery->whereHas('user', fn($q) =>
                 $q->where('course', $request->course)
             );
+        }
+
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $overdueQuery->whereYear('borrowed_at', $month->year)
+                         ->whereMonth('borrowed_at', $month->month);
         }
 
         if ($request->filled('from')) {
@@ -159,6 +181,12 @@ class AdminController extends Controller
             );
         }
 
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $lostQuery->whereYear('removed_at', $month->year)
+                      ->whereMonth('removed_at', $month->month);
+        }
+
         if ($request->filled('from')) {
             $lostQuery->whereDate('removed_at', '>=', $request->from);
         }
@@ -191,6 +219,11 @@ class AdminController extends Controller
         }
         if ($request->filled('status')) {
             $chartQuery->where('status', $request->status);
+        }
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $chartQuery->whereYear('borrowed_at', $month->year)
+                       ->whereMonth('borrowed_at', $month->month);
         }
         if ($request->filled('from')) {
             $chartQuery->whereDate('borrowed_at', '>=', $request->from);
@@ -317,6 +350,11 @@ class AdminController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $query->whereYear('borrowed_at', $month->year)
+                  ->whereMonth('borrowed_at', $month->month);
+        }
         if ($request->filled('from')) {
             $query->whereDate('borrowed_at', '>=', $request->from);
         }
@@ -348,6 +386,11 @@ class AdminController extends Controller
             $overdueQuery->whereHas('user', fn($q) =>
                 $q->where('course', $request->course)
             );
+        }
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $overdueQuery->whereYear('borrowed_at', $month->year)
+                         ->whereMonth('borrowed_at', $month->month);
         }
         if ($request->filled('from')) {
             $overdueQuery->whereDate('borrowed_at', '>=', $request->from);
@@ -383,6 +426,12 @@ class AdminController extends Controller
             );
         }
 
+        if ($request->filled('month')) {
+            $month = Carbon::parse($request->month);
+            $lostQuery->whereYear('removed_at', $month->year)
+                      ->whereMonth('removed_at', $month->month);
+        }
+
         if ($request->filled('from')) {
             $lostQuery->whereDate('removed_at', '>=', $request->from);
         }
@@ -393,7 +442,13 @@ class AdminController extends Controller
 
         $lost = $lostQuery->latest('removed_at')->get();
 
-        $pdf = PDF::loadView('admin.report-pdf', compact('borrows', 'overdue', 'lost'));
+        $charts = [
+            'statusChart' => $request->input('statusChart'),
+            'monthlyChart' => $request->input('monthlyChart'),
+            'courseChart' => $request->input('courseChart'),
+        ];
+
+        $pdf = PDF::loadView('admin.report-pdf', compact('borrows', 'overdue', 'lost', 'charts'));
 
         return $pdf->download('library_report_' . now()->format('Y-m-d') . '.pdf');
     }
